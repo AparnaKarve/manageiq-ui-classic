@@ -124,11 +124,28 @@ ManageIQ.angular.app.service('miqService', ['$timeout', '$document', '$q', '$log
 
     return serializedObj;
   };
+
   this.handleFailure = function(e) {
     miqSparkleOff();
     if (e.message) {
       $log.log(e.message);
     }
     return $q.reject(e);
+  };
+
+  this.angularForm = function(scope) {
+    var angularFormScope = scope;
+    while (!angular.isDefined(angularFormScope.angularForm)) {
+      angularFormScope = angularFormScope.$parent;
+    }
+    return angularFormScope.angularForm;
+  };
+
+  this.controllerScope = function(scope) {
+    var controllerScope = scope;
+    while (controllerScope.$parent === null) {
+      controllerScope = controllerScope.$parent;
+    }
+    return controllerScope;
   };
 }]);

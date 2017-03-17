@@ -5,19 +5,15 @@ ManageIQ.angular.app.directive('checkchange', ['miqService', function(miqService
       scope['formchange_' + ctrl.$name] = elem[0].name
       scope['elemType_' + ctrl.$name] = attr.type;
 
+      var angularForm = miqService.angularForm(scope);
+      var controllerScope = miqService.controllerScope(scope);
+
       var model = function() {
-        if (scope.$parent.angularForm) {
-          return scope.$parent.$eval(scope.$parent.angularForm.model || scope.$parent.model);
-        } else {
-          return scope.$eval(scope.angularForm.model || scope.model);
-        }
+        return controllerScope.$eval(angularForm.model || controllerScope.model);
       };
+
       var modelCopy = function() {
-        if (scope.$parent.angularForm) {
-          return scope.$parent.$eval(scope.$parent.angularForm.modelCopy || "modelCopy");
-        } else {
-          return scope.$eval(scope.angularForm.modelCopy || "modelCopy");
-        }
+        return controllerScope.$eval(angularForm.modelCopy || "modelCopy");
       };
 
       if (modelCopy()) {
@@ -27,7 +23,7 @@ ManageIQ.angular.app.directive('checkchange', ['miqService', function(miqService
           } else {
             viewModelComparison(scope, ctrl);
           }
-          if (scope.angularForm.$pristine)
+          if (angularForm.$pristine)
             checkForOverallFormPristinity(scope, ctrl);
         });
       }
@@ -36,28 +32,28 @@ ManageIQ.angular.app.directive('checkchange', ['miqService', function(miqService
         miqService.miqFlashClear();
 
         if (value == modelCopy()[ctrl.$name]) {
-          scope.angularForm[scope['formchange_' + ctrl.$name]].$setPristine();
+          angularForm[scope['formchange_' + ctrl.$name]].$setPristine();
         }
-        if (scope.angularForm[scope['formchange_' + ctrl.$name]].$pristine) {
+        if (angularForm[scope['formchange_' + ctrl.$name]].$pristine) {
           checkForOverallFormPristinity(scope, ctrl);
         }
-        scope.angularForm[scope['formchange_' + ctrl.$name]].$setTouched();
+        angularForm[scope['formchange_' + ctrl.$name]].$setTouched();
         return value;
       });
 
-      if (scope.angularForm.$pristine)
-        scope.angularForm.$setPristine();
+      if (angularForm.$pristine)
+        angularForm.$setPristine();
 
       var viewModelComparison = function(scope, ctrl) {
         if ((Array.isArray(modelCopy()[ctrl.$name]) &&
           angular.equals(model()[ctrl.$name], modelCopy()[ctrl.$name])) ||
           ctrl.$viewValue == modelCopy()[ctrl.$name]) {
-          scope.angularForm[scope['formchange_' + ctrl.$name]].$setPristine();
-          scope.angularForm[scope['formchange_' + ctrl.$name]].$setUntouched();
-          scope.angularForm.$pristine = true;
+          angularForm[scope['formchange_' + ctrl.$name]].$setPristine();
+          angularForm[scope['formchange_' + ctrl.$name]].$setUntouched();
+          angularForm.$pristine = true;
         } else {
-          scope.angularForm[scope['formchange_' + ctrl.$name]].$setDirty();
-          scope.angularForm.$pristine = false;
+          angularForm[scope['formchange_' + ctrl.$name]].$setDirty();
+          angularForm.$pristine = false;
         }
       };
 
@@ -66,12 +62,12 @@ ManageIQ.angular.app.directive('checkchange', ['miqService', function(miqService
         var copyDate = (modelCopy()[ctrl.$name] != undefined) ? moment(modelCopy()[ctrl.$name]) : null;
 
         if((modelDate && copyDate && (modelDate.diff(copyDate, 'days') == 0)) || (!modelDate && !copyDate)){
-          scope.angularForm[scope['formchange_' + ctrl.$name]].$setPristine();
-          scope.angularForm[scope['formchange_' + ctrl.$name]].$setUntouched();
-          scope.angularForm.$pristine = true;
+          angularForm[scope['formchange_' + ctrl.$name]].$setPristine();
+          angularForm[scope['formchange_' + ctrl.$name]].$setUntouched();
+          angularForm.$pristine = true;
         } else {
-          scope.angularForm[scope['formchange_' + ctrl.$name]].$setDirty();
-          scope.angularForm.$pristine = false;
+          angularForm[scope['formchange_' + ctrl.$name]].$setDirty();
+          angularForm.$pristine = false;
         }
       };
 
@@ -86,12 +82,11 @@ ManageIQ.angular.app.directive('checkchange', ['miqService', function(miqService
         var modelObject = _.cloneDeep(model());
         delete modelObject[ctrl.$name];
 
-        scope.angularForm.$pristine = angular.equals(modelCopyObject, modelObject);
+        angularForm.$pristine = angular.equals(modelCopyObject, modelObject);
 
-        if (scope.angularForm.$pristine)
-          scope.angularForm.$setPristine();
+        if (angularForm.$pristine)
+          angularForm.$setPristine();
       };
     }
   }
 }]);
-

@@ -45,6 +45,7 @@ ManageIQ.angular.app.service('postService', ["miqService", "$timeout", "$window"
   };
 
   this.cancelOperation = function(redirectURL, msg) {
+    miqService.sparkleOn();
     $timeout(function () {
       $window.location.href = redirectURL + '&flash_msg=' + msg;
     });
