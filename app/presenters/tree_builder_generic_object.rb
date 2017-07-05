@@ -13,7 +13,7 @@ class TreeBuilderGenericObject
     end
 
     [{
-      :text  => 'Generic Objects',
+      :text  => 'Generic Object Definitions',
       :href  => '#generic-objects-root',
       :tags  => ['4'],
       :nodes => children

@@ -71,7 +71,7 @@ class GenericObjectController < ApplicationController
                                                   :role_any    => true,
                                                   :name        => :generic_object_explorer,
                                                   :accord_name => "generic_object_definition_accordion",
-                                                  :title       => _("Generic Objects"))]
+                                                  :title       => _("Generic Object Definitions"))]
   end
 
   menu_section :automate
