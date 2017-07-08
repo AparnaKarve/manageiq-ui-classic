@@ -2050,6 +2050,7 @@ Rails.application.routes.draw do
         tree_data
       ),
       :post => %w(
+        accordion_select
         create
         delete
         save

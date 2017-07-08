@@ -1,22 +1,24 @@
 class TreeBuilderGenericObject
   def nodes
-    all_generic_object_definitions = GenericObjectDefinition.all
+    all_generic_objects = GenericObject.all
 
-    children = all_generic_object_definitions.collect do |generic_object_definition|
+    children = all_generic_objects.collect do |generic_object|
       {
-        :text => generic_object_definition.name,
-        :href => "##{generic_object_definition.name}",
+        :text => generic_object.name,
+        :tooltip => generic_object.name,
+        :href => "##{generic_object.name}",
         :icon => "fa fa-file-o",
         :tags => ["2"],
-        :id   => generic_object_definition.id
+        :id   => "go-#{generic_object.id}"
       }
     end
 
     [{
-      :text  => 'Generic Object Definitions',
-      :href  => '#generic-objects-root',
-      :tags  => ['4'],
-      :nodes => children
-    }].to_json
+       :text  => 'Generic Objects',
+       :tooltip => 'Generic Objects',
+       :href  => '#generic-objects-root',
+       :tags  => ['4'],
+       :nodes => children
+     }].to_json
   end
 end

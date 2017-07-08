@@ -1,4 +1,4 @@
-ManageIQ.angular.app.controller('bootstrapTreeController', ['$http', '$scope', 'bootstrapTreeSubscriptionService', 'initialTreeData', 'railsControllerName', function($http, $scope, bootstrapTreeSubscriptionService, initialTreeData, railsControllerName) {
+ManageIQ.angular.app.controller('bootstrapTreeController', ['$http', '$scope', 'bootstrapTreeSubscriptionService', 'treeDiv', 'initialTreeData', 'railsControllerName', function($http, $scope, bootstrapTreeSubscriptionService, treeDiv, initialTreeData, railsControllerName) {
   var init = function() {
     updateTree(initialTreeData);
 
@@ -9,7 +9,7 @@ ManageIQ.angular.app.controller('bootstrapTreeController', ['$http', '$scope', '
   };
 
   var updateTree = function(data) {
-    $('#bootstrap-tree-left-nav').treeview({
+    $(treeDiv).treeview({
       collapseIcon: 'fa fa-angle-down',
       data: data,
       expandIcon: 'fa fa-angle-right',
@@ -18,15 +18,15 @@ ManageIQ.angular.app.controller('bootstrapTreeController', ['$http', '$scope', '
       onNodeSelected: nodeSelectedCallback
     });
 
-    $scope.rootNode = $('#bootstrap-tree-left-nav').treeview('getNodes')[0];
-    $('#bootstrap-tree-left-nav').treeview('selectNode', $scope.rootNode);
+    $scope.rootNode = $(treeDiv).treeview('getNodes')[0];
+    $(treeDiv).treeview('selectNode', $scope.rootNode);
   };
 
   var nodeSelectedCallback = function(_event, data) {
     if (data.id) {
       $http.get('/' + railsControllerName + '/object_data/' + data.id).then(sendTreeClickedEvent);
     } else {
-      $http.get('/' + railsControllerName + '/all_object_data').then(sendRootTreeClickedEvent);
+      $http.get('/' + railsControllerName + '/all_object_data?root=god').then(sendRootTreeClickedEvent);
     }
   };
 
@@ -39,17 +39,17 @@ ManageIQ.angular.app.controller('bootstrapTreeController', ['$http', '$scope', '
   };
 
   var unselectAllNodes = function(_response) {
-    var selectedNodes = $('#bootstrap-tree-left-nav').treeview('getSelected');
-    $('#bootstrap-tree-left-nav').treeview('unselectNode', selectedNodes);
+    var selectedNodes = $(treeDiv).treeview('getSelected');
+    $(treeDiv).treeview('unselectNode', selectedNodes);
   };
 
   var selectSingleNode = function(response) {
     var node = _.find($scope.rootNode.nodes, {text: response});
-    $('#bootstrap-tree-left-nav').treeview('selectNode', node);
+    $(treeDiv).treeview('selectNode', node);
   };
 
   var selectRootNode = function() {
-    $('#bootstrap-tree-left-nav').treeview('selectNode', $scope.rootNode);
+    $(treeDiv).treeview('selectNode', $scope.rootNode);
   };
 
   init();

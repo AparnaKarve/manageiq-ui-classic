@@ -63,6 +63,8 @@ module Sandbox
     dialogs_tree
     event_tree
     export_tree
+    go_tree
+    god_tree
     images_filter_tree
     images_tree
     infra_networking_tree
@@ -131,6 +133,8 @@ module Sandbox
     dialogs
     event
     export
+    go
+    god
     configuration_manager_providers
     images
     images_filter
