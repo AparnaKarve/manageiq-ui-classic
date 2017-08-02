@@ -1,3 +1,5 @@
+- non_ajax_validate ||= false
+
 - if !session[:host_items].nil?
   - verify_title_on ||= _("Validate the credentials by logging into the selected %{title_for_host}") % {:title_for_host => title_for_host}
   - verify_title_off ||= _("%{host} to validate against, Username and matching password fields are needed to perform verification of credentials") % {:host => title_for_host}
@@ -7,6 +9,8 @@
 - if controller.send(:restful?)
   -# TODO: replace first argument with a sane way of submitting the form
   - validate = "#{main_scope}.validateClicked({target: '.validate_button:visible'}, '#{valtype}', true)"
+- elsif non_ajax_validate
+  - validate = "#{main_scope}.validateClicked({target: '.validate_button:visible'}, '#{valtype}', '#{url_for_only_path(:action => validate_url, :id => id, :type => valtype, :button => "validate")}', true, angularForm)"
 - else
   - validate = "#{main_scope}.validateClicked('#{url_for_only_path(:action => validate_url, :id => id, :type => valtype, :button => "validate")}')"
 %div{"ng-show" => ng_show}
@@ -24,10 +28,10 @@
         %input.form-control{"type"                => "checkbox",
                             "id"                  => "#{valtype}_auth_status",
                             "name"                => "#{valtype}_auth_status",
-                            "ng-model"            => "#{ng_model}.#{valtype}_auth_status",
+                            "ng-model"            => "$parent.#{main_scope}.#{ng_model}.#{valtype}_auth_status",
                             "prefix"              => "#{valtype}",
                             "validation-status"   => "",
-                            "adjust-error-on-tab" => "#{ng_model}.#{valtype}_auth_status",
+                            "adjust-error-on-tab" => "$parent.#{main_scope}.#{ng_model}.#{valtype}_auth_status",
                             "ng-show"             => false}
         %span.help-block{"ng-if" => "angularForm.#{valtype}_auth_status.$error.validationRequired"}
           = _("Validation Required")

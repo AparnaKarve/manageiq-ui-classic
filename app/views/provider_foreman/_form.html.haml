@@ -59,6 +59,7 @@
                             :required       => "",
                             "ng-trim"       => false,
                             "detect_spaces" => "",
+                            "ng-change"     => "vm.adjustValidationStatus('url', angularForm)",
                             :checkchange    => true}
         %span.help-block{"ng-show" => "angularForm.url.$error.required"}
           = _("Required")
@@ -80,12 +81,14 @@
     = render :partial => "layouts/angular-bootstrap/auth_credentials_angular_bootstrap",
              :locals  => {:ng_show           => true,
                           :ng_model          => "providerForemanModel",
+                          :prefix            => "default",
                           :ng_reqd_userid    => true,
                           :ng_reqd_password  => true,
                           :validate_url      => "authentication_validate",
                           :id                => @provider_manager.id || "new",
                           :valtype           => nil,
                           :vm_scope          => true,
+                          :non_ajax_validate => true,
                           :basic_info_needed => true}
 
     = render :partial => "layouts/angular/generic_form_buttons"

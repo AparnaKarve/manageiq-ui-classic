@@ -78,10 +78,12 @@ module Mixins
       begin
         @provider.verify_credentials(params[:type])
       rescue => error
-        render_flash(_("Credential validation was not successful: %{details}") % {:details => error}, :error)
+        add_flash(_("Credential validation was not successful: %{details}") % {:details => error}, :error)
       else
-        render_flash(_("Credential validation was successful"))
+        add_flash(_("Credential validation was successful"))
       end
+
+      render :json => {:message => @flash_array.last(1)[0][:message], :level => @flash_array.last(1)[0][:level]}
     end
 
     def explorer
@@ -280,7 +282,8 @@ module Mixins
                        :zone       => provider.zone.name,
                        :url        => provider.url,
                        :verify_ssl => provider.verify_ssl,
-                       :log_userid => provider.authentications.first.userid}
+                       :default_userid => provider.authentications.first.userid,
+                       :default_auth_status => provider.authentication_status_ok?,}
     end
 
     private
