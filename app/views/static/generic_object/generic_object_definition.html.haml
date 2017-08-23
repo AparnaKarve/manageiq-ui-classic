@@ -1,0 +1,71 @@
+%form.form-horizontal{"name"         => "angularForm",
+                      "model-copy"   => "vm.modelCopy",
+                      "model"        => "vm.genericObjectDefinitionModel",
+                      "ng-show"      => "vm.afterGet",
+                      "ng-cloak"     => "",
+                      "form-changed" => true,
+                      "miq-form"     => true}
+  .form-group{"ng-class" => "{'has-error': angularForm.name.$invalid}"}
+    %label.col-md-2.control-label{"for" => "generic_object_definition_name"}
+      = _("Name")
+    .col-md-8
+      %input.form-control{"type"        => "text",
+                          "id"          => "generic_object_definition_name",
+                          "name"        => "name",
+                          "ng-model"    => "vm.genericObjectDefinitionModel.name",
+                          "maxlength"   => ViewHelper::MAX_NAME_LEN,
+                          "required"    => "",
+                          "auto-focus"  => ""}
+      %span.help-block{"ng-show" => "angularForm.name.$error.required"}
+        = _("Required")
+  .form-group{"ng-class" => "{'has-error': angularForm.description.$invalid}"}
+    %label.col-md-2.control-label{"for" => "generic_object_definition_description"}
+      = _("Description")
+    .col-md-8
+      %input.form-control{"type"        => "text",
+                          "id"          => "generic_object_definition_description",
+                          "name"        => "description",
+                          "ng-model"    => "vm.genericObjectDefinitionModel.description",
+                          "maxlength"   => "#{ViewHelper::MAX_DESC_LEN}",
+                          "required"    => ""}
+      %span.help-block{"ng-show" => "angularForm.description.$error.required"}
+        = _("Required")
+  .form-group
+    %label.col-md-2.control-label{"for" => "generic_object_definition_attrributes"}
+      = _("Attributes")
+    .col-md-8
+      %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.properties.attribute_names",
+                                      "values"        => "vm.genericObjectDefinitionModel.properties.attribute_types",
+                                      "default-value" => "string",
+                                      "table-headers" => "vm.attributeTableHeaders",
+                                      "no-of-rows"    => "vm.noOfAttributeRows",
+                                      "value-options" => "vm.types"} 
+
+      -#%table.table.datatable.table-striped.table-bordered
+      -#  %thead
+      -#    %tr
+      -#      %th{"ng-repeat" => "header in vm.attributeTableHeadings track by $index"}{{header}}
+      -#  %tbody
+      -#    %tr(ng-repeat="attribute_name in vm.genericObjectDefinitionModel.properties.attribute_names track by $index")
+      -#      %td
+      -#        %input.form-control{"type"        => "text",
+      -#                            "id"          => "{{attribute_name}}",
+      -#                            "name"        => "{{attribute_name}}",
+      -#                            "ng-model"    => "vm.genericObjectDefinitionModel.properties.attribute_names[$index]",
+      -#                            "maxlength"   => "#{ViewHelper::MAX_NAME_LEN}",}
+      -#      %td{:style => "width: 50px"}
+      -#        %select{"name"        => "{{attribute_name}}{{$index}}",
+      -#                "ng-model"    => "vm.genericObjectDefinitionModel.properties.attribute_types[$index]",
+      -#                "ng-options"  => "type.id as type.name for type in vm.types",
+      -#                "pf-select"   => true,
+      -#                "ng-keydown"  => "vm.addRow($event, i)"}
+      -#          -#%option{"ng-value" => "", "disabled" => ""}
+      -#          -#  = "<#{_('Choose')}>"
+      -#      %td{:align => "center", :style => "width: 50px"}
+      -#        %span.input-group-btn
+      -#          .btn.btn-default{:alt => t = _("Delete Row"), :title => t, "ng-click" => "vm.deleteRow($index)", "ng-show" => "vm.noOfAttributeRows > 1"}
+      -#            %i.fa.fa-minus
+      -#      %td{:align => "center", :style => "width: 50px"}
+      -#        %span.input-group-btn
+      -#          .btn.btn-default{:alt => t = _("Add Row"), :title => t, "ng-click" => "vm.addRow($index)", "ng-show" => "$index === vm.noOfAttributeRows - 1"}
+      -#            %i.fa.fa-plus

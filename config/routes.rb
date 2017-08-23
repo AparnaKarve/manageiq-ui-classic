@@ -2054,15 +2054,18 @@ Rails.application.routes.draw do
       :get => %w(
         download_data
         download_summary_pdf
+        new
         show
         show_list
       ),
       :post => %w(
+        button
         create_del
         exp_button
         exp_changed
         exp_token_pressed
         listnav_search_selected
+        new
         update_del
         quick_search
         show_list
