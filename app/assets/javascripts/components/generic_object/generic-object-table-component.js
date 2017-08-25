@@ -2,10 +2,12 @@ ManageIQ.angular.app.component('genericObjectTableComponent', {
   bindings: {
     keys: '=',
     values: '=',
+    keyType: '@',
     defaultValue: '@?',
     tableHeaders: '=',
     valueOptions: '=',
     noOfRows: '=',
+    angularForm: '=',
   },
   controllerAs: 'vm',
   controller: genericObjectTableController,
@@ -22,19 +24,30 @@ function genericObjectTableController($timeout) {
     vm.origNoOfRows = vm.noOfRows;
   };
 
-  vm.addRow = function(_currentRow, element) {
+  vm.addRow = function(_currentRow, element, fromDelete) {
     vm.keys.push('');
-    vm.values.push(vm.defaultValue);
+    if (vm.defaultValue) {
+      vm.values.push(vm.defaultValue);
+    }
     vm.noOfRows = _.size(vm.keys);
 
-    $timeout(function () {
-      angular.element('#' + element).focus();
-    }, -1);
+    if (!fromDelete) {
+      $timeout(function () {
+        angular.element('#' + element).focus();
+      }, -1);
+    }
   };
 
-  vm.deleteRow = function(currentRow) {
+  vm.deleteRow = function(currentRow, keyType) {
     _.pullAt(vm.keys, [currentRow]);
-    _.pullAt(vm.values, [currentRow]);
+
+    if (vm.values) {
+      _.pullAt(vm.values, [currentRow]);
+    }
     vm.noOfRows = _.size(vm.keys);
+
+    if (vm.noOfRows === 0) {
+      vm.addRow(0, keyType + '0', true);
+    }
   };
 }

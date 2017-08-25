@@ -36,11 +36,32 @@
     .col-md-8
       %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.properties.attribute_names",
                                       "values"        => "vm.genericObjectDefinitionModel.properties.attribute_types",
-                                      "default-value" => "string",
+                                      "key-type"      => "Attribute",
+                                      "default-value1" => "string",
                                       "table-headers" => "vm.attributeTableHeaders",
                                       "no-of-rows"    => "vm.noOfAttributeRows",
+                                      "angular-form"  => "angularForm",
                                       "value-options" => "vm.types"} 
-
+  .form-group
+    %label.col-md-2.control-label{"for" => "generic_object_definition_associations"}
+      = _("Associations")
+    .col-md-8
+      %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.properties.association_names",
+                                      "values"        => "vm.genericObjectDefinitionModel.properties.association_classes",
+                                      "key-type"      => "Association",
+                                      "default-value" => "",
+                                      "table-headers" => "vm.associationTableHeaders",
+                                      "no-of-rows"    => "vm.noOfAssociationRows",
+                                      "angular-form"  => "angularForm",
+                                      "value-options" => "vm.classes"} 
+  .form-group
+    %label.col-md-2.control-label{"for" => "generic_object_definition_methods"}
+      = _("Methods")
+    .col-md-8
+      %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.properties.method_names",
+                                      "key-type"      => "Method",
+                                      "table-headers" => "vm.methodTableHeaders",
+                                      "no-of-rows"    => "vm.noOfMethodRows",} 
       -#%table.table.datatable.table-striped.table-bordered
       -#  %thead
       -#    %tr

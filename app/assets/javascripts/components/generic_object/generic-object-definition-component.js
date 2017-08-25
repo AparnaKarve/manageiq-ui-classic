@@ -29,7 +29,18 @@ function genericObjectDefinitionFormController(API, miqService) {
       {id: "jsonb", name: "jsonb"},
     ];
 
+    // vm.classes = [
+    //   {id: "Vm", name: "Vm"},
+    //   {id: "Service", name: "Service"},
+    //   {id: "ManageIQ::Providers::InfraManager", name: "ManageIQ::Providers::InfraManager"},
+    // ];
+    vm.classes = [];
+
     vm.attributeTableHeaders = [__("Name"), __("Type")];
+
+    vm.associationTableHeaders = [__("Name"), __("Class")];
+
+    vm.methodTableHeaders = [__("Name")];
 
     vm.genericObjectDefinitionModel = {
       name: '',
@@ -44,6 +55,10 @@ function genericObjectDefinitionFormController(API, miqService) {
     // vm.genericObjectDefinitionModel.attributes.attribute_type = [10];
     // vm.genericObjectDefinitionModel.attributes.attribute_type[0].type = "string";
     // push({attribute_type: "string"});
+
+    API.options('/api/generic_object_definitions/')
+      .then(getGenericObjectDefinitionOptions)
+      .catch(miqService.handleFailure);
 
     vm.recordId = 3;
 
@@ -129,19 +144,41 @@ function genericObjectDefinitionFormController(API, miqService) {
 
     vm.genericObjectDefinitionModel.properties.attribute_names = [];
     vm.genericObjectDefinitionModel.properties.attribute_types = [];
+    vm.genericObjectDefinitionModel.properties.association_names = [];
+    vm.genericObjectDefinitionModel.properties.association_classes = [];
+    vm.genericObjectDefinitionModel.properties.method_names = [];
 
     _.forEach(vm.genericObjectDefinitionModel.properties.attributes, function(value, key) {
       vm.genericObjectDefinitionModel.properties.attribute_names.push(key);
       vm.genericObjectDefinitionModel.properties.attribute_types.push(value);
     });
 
+    _.forEach(vm.genericObjectDefinitionModel.properties.associations, function(value, key) {
+      vm.genericObjectDefinitionModel.properties.association_names.push(key);
+      vm.genericObjectDefinitionModel.properties.association_classes.push(value);
+    });
+
+    _.forEach(vm.genericObjectDefinitionModel.properties.methods, function(key) {
+      vm.genericObjectDefinitionModel.properties.method_names.push(key);
+    });
+
     vm.genericObjectDefinitionModel.properties.attributes = {};
+    vm.genericObjectDefinitionModel.properties.associations = {};
+    vm.genericObjectDefinitionModel.properties.methods = [];
 
     vm.noOfAttributeRows = _.size(vm.genericObjectDefinitionModel.properties.attribute_names);
+    vm.noOfAssociationRows = _.size(vm.genericObjectDefinitionModel.properties.association_names);
+    vm.noOfMethodRows = _.size(vm.genericObjectDefinitionModel.properties.method_names);
 
     vm.afterGet = true;
     vm.modelCopy = angular.copy( vm.genericObjectDefinitionModel );
 
     miqService.sparkleOff();
+  }
+
+  function getGenericObjectDefinitionOptions(response) {
+    _.forEach(response.data.reportable_models, function(item) {
+      vm.classes.push({id: item[1], name: item[0]});
+    });
   }
 }

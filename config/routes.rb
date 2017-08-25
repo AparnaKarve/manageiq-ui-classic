@@ -2065,7 +2065,6 @@ Rails.application.routes.draw do
         exp_changed
         exp_token_pressed
         listnav_search_selected
-        new
         update_del
         quick_search
         show_list
