@@ -20,20 +20,22 @@ function genericObjectDefinitionFormController(API, miqService) {
     vm.attrArr = [0];
     vm.currentRow = 0;
 
-    vm.types = [
-      {id: "integer", name: "integer"},
-      {id: "string", name: "string"},
-      {id: "boolean", name: "boolean"},
-      {id: "datetime", name: "datetime"},
-      {id: "json", name: "json"},
-      {id: "jsonb", name: "jsonb"},
-    ];
+    // vm.types = [
+    //   {id: "integer", name: "integer"},
+    //   {id: "string", name: "string"},
+    //   {id: "boolean", name: "boolean"},
+    //   {id: "datetime", name: "datetime"},
+    //   {id: "json", name: "json"},
+    //   {id: "jsonb", name: "jsonb"},
+    // ];
 
     // vm.classes = [
     //   {id: "Vm", name: "Vm"},
     //   {id: "Service", name: "Service"},
     //   {id: "ManageIQ::Providers::InfraManager", name: "ManageIQ::Providers::InfraManager"},
     // ];
+
+    vm.types = [];
     vm.classes = [];
 
     vm.attributeTableHeaders = [__("Name"), __("Type")];
@@ -179,6 +181,10 @@ function genericObjectDefinitionFormController(API, miqService) {
   function getGenericObjectDefinitionOptions(response) {
     _.forEach(response.data.reportable_models, function(item) {
       vm.classes.push({id: item[1], name: item[0]});
+    });
+
+    _.forEach(response.data.types, function(item) {
+      vm.types.push({id: item[1], name: item[0]});
     });
   }
 }
