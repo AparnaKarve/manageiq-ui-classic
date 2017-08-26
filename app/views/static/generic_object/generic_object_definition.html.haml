@@ -34,8 +34,8 @@
     %label.col-md-2.control-label{"for" => "generic_object_definition_attrributes"}
       = _("Attributes")
     .col-md-8
-      %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.properties.attribute_names",
-                                      "values"        => "vm.genericObjectDefinitionModel.properties.attribute_types",
+      %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.attribute_names",
+                                      "values"        => "vm.genericObjectDefinitionModel.attribute_types",
                                       "key-type"      => "Attribute",
                                       "default-value1" => "string",
                                       "table-headers" => "vm.attributeTableHeaders",
@@ -46,8 +46,8 @@
     %label.col-md-2.control-label{"for" => "generic_object_definition_associations"}
       = _("Associations")
     .col-md-8
-      %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.properties.association_names",
-                                      "values"        => "vm.genericObjectDefinitionModel.properties.association_classes",
+      %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.association_names",
+                                      "values"        => "vm.genericObjectDefinitionModel.association_classes",
                                       "key-type"      => "Association",
                                       "default-value" => "",
                                       "table-headers" => "vm.associationTableHeaders",
@@ -58,7 +58,7 @@
     %label.col-md-2.control-label{"for" => "generic_object_definition_methods"}
       = _("Methods")
     .col-md-8
-      %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.properties.method_names",
+      %generic-object-table-component{"keys"          => "vm.genericObjectDefinitionModel.method_names",
                                       "key-type"      => "Method",
                                       "table-headers" => "vm.methodTableHeaders",
                                       "no-of-rows"    => "vm.noOfMethodRows",} 
@@ -90,3 +90,4 @@
       -#        %span.input-group-btn
       -#          .btn.btn-default{:alt => t = _("Add Row"), :title => t, "ng-click" => "vm.addRow($index)", "ng-show" => "$index === vm.noOfAttributeRows - 1"}
       -#            %i.fa.fa-plus
+    = render :partial => "layouts/angular/generic_form_buttons"

@@ -17,8 +17,10 @@ function genericObjectDefinitionFormController(API, miqService) {
     vm.saveable = miqService.saveable;
     vm.afterGet = false;
 
-    vm.attrArr = [0];
-    vm.currentRow = 0;
+    vm.entity = __('Generic Object Class');
+
+    // vm.attrArr = [0];
+    // vm.currentRow = 0;
 
     // vm.types = [
     //   {id: "integer", name: "integer"},
@@ -47,9 +49,11 @@ function genericObjectDefinitionFormController(API, miqService) {
     vm.genericObjectDefinitionModel = {
       name: '',
       description: '',
-      // attributes: [{attribute_name: '', attribute_type: ''}], //array of objects
-      attribute_names: [], //array of objects
-      attribute_types: [], //array of objects
+      attribute_names: [],
+      attribute_types: [],
+      association_names: [],
+      association_classes: [],
+      method_names: [],
     };
 
 
@@ -78,27 +82,55 @@ function genericObjectDefinitionFormController(API, miqService) {
   };
 
   vm.addRow = function(_currentRow) {
-    vm.genericObjectDefinitionModel.properties.attribute_names.push('');
-    vm.genericObjectDefinitionModel.properties.attribute_types.push('string');
-    vm.noOfAttributeRows = _.size(vm.genericObjectDefinitionModel.properties.attribute_names);
+    vm.genericObjectDefinitionModel.attribute_names.push('');
+    vm.genericObjectDefinitionModel.attribute_types.push('string');
+    vm.noOfAttributeRows = _.size(vm.genericObjectDefinitionModel.attribute_names);
 
   };
 
   vm.deleteRow = function(currentRow) {
-    _.pullAt(vm.genericObjectDefinitionModel.properties.attribute_names, [currentRow]);
-    _.pullAt(vm.genericObjectDefinitionModel.properties.attribute_types, [currentRow]);
-    vm.noOfAttributeRows = _.size(vm.genericObjectDefinitionModel.properties.attribute_names);
+    _.pullAt(vm.genericObjectDefinitionModel.attribute_names, [currentRow]);
+    _.pullAt(vm.genericObjectDefinitionModel.attribute_types, [currentRow]);
+    vm.noOfAttributeRows = _.size(vm.genericObjectDefinitionModel.attribute_names);
   };
 
-  // vm.saveClicked = function() {
-  //   var saveObject = {
-  //     name: vm.tenantModel.name,
-  //     description: vm.tenantModel.description,
-  //     use_config_for_attributes: vm.tenantModel.use_config_for_attributes,
-  //   };
-  //   var saveMsg = sprintf(__('%s \"%s\" has been successfully saved.'), vm.entity, vm.tenantModel.name);
-  //   vm.saveWithAPI('put', '/api/tenants/' + vm.recordId, saveObject, saveMsg);
-  // };
+  vm.saveClicked = function() {
+    vm.genericObjectDefinitionModel.properties.attributes = _.zipObject(
+      vm.genericObjectDefinitionModel.attribute_names,
+      vm.genericObjectDefinitionModel.attribute_types);
+
+    vm.genericObjectDefinitionModel.properties.associations = _.zipObject(
+      vm.genericObjectDefinitionModel.association_names,
+      vm.genericObjectDefinitionModel.association_classes);
+
+    vm.genericObjectDefinitionModel.properties.methods = vm.genericObjectDefinitionModel.method_names;
+
+    // var saveObject = {
+    //   name: vm.genericObjectDefinitionModel.name,
+    //   description: vm.genericObjectDefinitionModel.description,
+    //   properties: vm.genericObjectDefinitionModel.properties,
+    // };
+    // var saveMsg = sprintf(__('%s \"%s\" has been successfully saved.'), vm.entity, vm.genericObjectDefinitionModel.name);
+    // vm.saveWithAPI('post', '/api/generic_object_definitions/' + vm.recordId, saveObject, saveMsg);
+
+    var saveObject = {
+      name: vm.modelCopy.name,
+      resource: {
+        name: vm.genericObjectDefinitionModel.name,
+        description: vm.genericObjectDefinitionModel.description,
+        properties: vm.genericObjectDefinitionModel.properties,
+      }
+    };
+
+    var request = angular.toJson({
+      action: "edit",
+      resources: [saveObject],
+    });
+
+    var saveMsg = sprintf(__('%s \"%s\" has been successfully saved.'), vm.entity, vm.genericObjectDefinitionModel.name);
+    vm.saveWithAPI('post', '/api/generic_object_definitions/' + vm.recordId, request, saveMsg);
+
+  };
   //
   // vm.addClicked = function() {
   //   var saveObject = {
@@ -111,19 +143,23 @@ function genericObjectDefinitionFormController(API, miqService) {
   //   vm.saveWithAPI('post', '/api/tenants/', saveObject, saveMsg);
   // };
   //
-  // vm.saveWithAPI = function(method, url, saveObject, saveMsg) {
-  //   miqService.sparkleOn();
-  //   API[method](url, saveObject)
-  //     .then(miqService.redirectBack.bind(vm, saveMsg, 'success', vm.redirectUrl))
-  //     .catch(miqService.handleFailure);
-  // };
+  vm.saveWithAPI = function(method, url, saveObject, saveMsg) {
+    miqService.sparkleOn();
+    API[method](url, saveObject)
+      .then(miqService.redirectBack.bind(vm, saveMsg, 'success', vm.redirectUrl))
+      .catch(miqService.handleFailure);
+  };
   //
-  // vm.resetClicked = function(angularForm) {
-  //   vm.tenantModel = angular.copy(vm.modelCopy);
-  //   angularForm.$setUntouched(true);
-  //   angularForm.$setPristine(true);
-  //   miqService.miqFlash('warn', __('All changes have been reset'));
-  // };
+  vm.resetClicked = function(angularForm) {
+    vm.genericObjectDefinitionModel = angular.copy(vm.modelCopy);
+    vm.noOfAttributeRows = _.size(vm.genericObjectDefinitionModel.attribute_names);
+    vm.noOfAssociationRows = _.size(vm.genericObjectDefinitionModel.association_names);
+    vm.noOfMethodRows = _.size(vm.genericObjectDefinitionModel.method_names);
+
+    angularForm.$setUntouched(true);
+    angularForm.$setPristine(true);
+    miqService.miqFlash('warn', __('All changes have been reset'));
+  };
   //
   // vm.cancelClicked = function() {
   //   miqService.sparkleOn();
@@ -144,33 +180,33 @@ function genericObjectDefinitionFormController(API, miqService) {
   function getGenericObjectDefinitionFormData(response) {
     Object.assign(vm.genericObjectDefinitionModel, response);
 
-    vm.genericObjectDefinitionModel.properties.attribute_names = [];
-    vm.genericObjectDefinitionModel.properties.attribute_types = [];
-    vm.genericObjectDefinitionModel.properties.association_names = [];
-    vm.genericObjectDefinitionModel.properties.association_classes = [];
-    vm.genericObjectDefinitionModel.properties.method_names = [];
+    // vm.genericObjectDefinitionModel.attribute_names = [];
+    // vm.genericObjectDefinitionModel.attribute_types = [];
+    // vm.genericObjectDefinitionModel.association_names = [];
+    // vm.genericObjectDefinitionModel.association_classes = [];
+    // vm.genericObjectDefinitionModel.method_names = [];
 
     _.forEach(vm.genericObjectDefinitionModel.properties.attributes, function(value, key) {
-      vm.genericObjectDefinitionModel.properties.attribute_names.push(key);
-      vm.genericObjectDefinitionModel.properties.attribute_types.push(value);
+      vm.genericObjectDefinitionModel.attribute_names.push(key);
+      vm.genericObjectDefinitionModel.attribute_types.push(value);
     });
 
     _.forEach(vm.genericObjectDefinitionModel.properties.associations, function(value, key) {
-      vm.genericObjectDefinitionModel.properties.association_names.push(key);
-      vm.genericObjectDefinitionModel.properties.association_classes.push(value);
+      vm.genericObjectDefinitionModel.association_names.push(key);
+      vm.genericObjectDefinitionModel.association_classes.push(value);
     });
 
     _.forEach(vm.genericObjectDefinitionModel.properties.methods, function(key) {
-      vm.genericObjectDefinitionModel.properties.method_names.push(key);
+      vm.genericObjectDefinitionModel.method_names.push(key);
     });
 
     vm.genericObjectDefinitionModel.properties.attributes = {};
     vm.genericObjectDefinitionModel.properties.associations = {};
     vm.genericObjectDefinitionModel.properties.methods = [];
 
-    vm.noOfAttributeRows = _.size(vm.genericObjectDefinitionModel.properties.attribute_names);
-    vm.noOfAssociationRows = _.size(vm.genericObjectDefinitionModel.properties.association_names);
-    vm.noOfMethodRows = _.size(vm.genericObjectDefinitionModel.properties.method_names);
+    vm.noOfAttributeRows = _.size(vm.genericObjectDefinitionModel.attribute_names);
+    vm.noOfAssociationRows = _.size(vm.genericObjectDefinitionModel.association_names);
+    vm.noOfMethodRows = _.size(vm.genericObjectDefinitionModel.method_names);
 
     vm.afterGet = true;
     vm.modelCopy = angular.copy( vm.genericObjectDefinitionModel );
