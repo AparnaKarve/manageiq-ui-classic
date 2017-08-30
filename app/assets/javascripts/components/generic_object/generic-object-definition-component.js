@@ -8,9 +8,9 @@ ManageIQ.angular.app.component('genericObjectDefinitionComponent', {
   templateUrl: '/static/generic_object/generic_object_definition.html.haml',
 });
 
-genericObjectDefinitionFormController.$inject = ['API', 'miqService'];
+genericObjectDefinitionFormController.$inject = ['API', 'miqService', '$timeout'];
 
-function genericObjectDefinitionFormController(API, miqService) {
+function genericObjectDefinitionFormController(API, miqService, $timeout) {
   var vm = this;
 
   vm.$onInit = function() {
@@ -44,10 +44,6 @@ function genericObjectDefinitionFormController(API, miqService) {
       method_names: [],
     };
 
-    vm.noOfAttributeRows = 0;
-    vm.noOfAssociationRows = 0;
-    vm.noOfMethodRows = 0;
-
     if (vm.recordId) {
       vm.newRecord = false;
       miqService.sparkleOn();
@@ -62,28 +58,53 @@ function genericObjectDefinitionFormController(API, miqService) {
     }
   };
 
+  vm.resetClicked = function(angularForm) {
+    vm.genericObjectDefinitionModel = angular.copy(vm.modelCopy);
+
+    assignAllObjectsToKeyValueArrays(true);
+
+    $timeout(function () {
+      angularForm.$setUntouched(true);
+      angularForm.$setPristine(true);
+    }, -1);
+
+    miqService.miqFlash('warn', __('All changes have been reset'));
+  };
+
   // private functions
   function getGenericObjectDefinitionFormData(response) {
     Object.assign(vm.genericObjectDefinitionModel, response);
 
-    vm.noOfAttributeRows = assignObjectToKeyValueArrays(
-      vm.genericObjectDefinitionModel.properties.attributes,
-      vm.genericObjectDefinitionModel.attribute_names,
-      vm.genericObjectDefinitionModel.attribute_types);
-
-    vm.noOfAssociationRows = assignObjectToKeyValueArrays(
-      vm.genericObjectDefinitionModel.properties.associations,
-      vm.genericObjectDefinitionModel.association_names,
-      vm.genericObjectDefinitionModel.association_classes);
-
-    vm.noOfMethodRows = assignObjectToKeyValueArrays(
-      vm.genericObjectDefinitionModel.properties.methods,
-      vm.genericObjectDefinitionModel.method_names);
+    assignAllObjectsToKeyValueArrays();
 
     vm.afterGet = true;
     vm.modelCopy = angular.copy( vm.genericObjectDefinitionModel );
 
     miqService.sparkleOff();
+  }
+
+  function assignAllObjectsToKeyValueArrays(purge) {
+    if (purge) {
+      vm.genericObjectDefinitionModel.attribute_names = [];
+      vm.genericObjectDefinitionModel.attribute_types = [];
+      vm.genericObjectDefinitionModel.association_names = [];
+      vm.genericObjectDefinitionModel.association_classes = [];
+      vm.genericObjectDefinitionModel.method_names = [];
+    }
+
+    vm.genericObjectDefinitionModel.noOfAttributeRows = assignObjectToKeyValueArrays(
+      vm.genericObjectDefinitionModel.properties.attributes,
+      vm.genericObjectDefinitionModel.attribute_names,
+      vm.genericObjectDefinitionModel.attribute_types);
+
+    vm.genericObjectDefinitionModel.noOfAssociationRows = assignObjectToKeyValueArrays(
+      vm.genericObjectDefinitionModel.properties.associations,
+      vm.genericObjectDefinitionModel.association_names,
+      vm.genericObjectDefinitionModel.association_classes);
+
+    vm.genericObjectDefinitionModel.noOfMethodRows = assignObjectToKeyValueArrays(
+      vm.genericObjectDefinitionModel.properties.methods,
+      vm.genericObjectDefinitionModel.method_names);
   }
 
   function assignObjectToKeyValueArrays(obj, keyArray, valueArray) {

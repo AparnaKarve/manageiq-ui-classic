@@ -39,7 +39,7 @@
                                       "key-type"      => "Attribute",
                                       "table-headers" => "vm.attributeTableHeaders",
                                       "new-record"    => "vm.newRecord",
-                                      "no-of-rows"    => "vm.noOfAttributeRows",
+                                      "no-of-rows"    => "vm.genericObjectDefinitionModel.noOfAttributeRows",
                                       "angular-form"  => "angularForm",
                                       "value-options" => "vm.types"}
   .form-group
@@ -51,7 +51,7 @@
                                       "key-type"      => "Association",
                                       "table-headers" => "vm.associationTableHeaders",
                                       "new-record"    => "vm.newRecord",
-                                      "no-of-rows"    => "vm.noOfAssociationRows",
+                                      "no-of-rows"    => "vm.genericObjectDefinitionModel.noOfAssociationRows",
                                       "angular-form"  => "angularForm",
                                       "value-options" => "vm.classes"}
   .form-group
@@ -62,5 +62,6 @@
                                       "key-type"      => "Method",
                                       "table-headers" => "vm.methodTableHeaders",
                                       "new-record"    => "vm.newRecord",
-                                      "no-of-rows"    => "vm.noOfMethodRows",
+                                      "no-of-rows"    => "vm.genericObjectDefinitionModel.noOfMethodRows",
                                       "angular-form"  => "angularForm"}
+  = render :partial => "layouts/angular/generic_form_buttons"
