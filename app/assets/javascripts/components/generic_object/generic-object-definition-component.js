@@ -14,6 +14,7 @@ function genericObjectDefinitionFormController(API, miqService, $timeout) {
   var vm = this;
 
   vm.$onInit = function() {
+    vm.entity = __('Generic Object Class');
     vm.saveable = miqService.saveable;
     vm.afterGet = false;
 
@@ -70,6 +71,16 @@ function genericObjectDefinitionFormController(API, miqService, $timeout) {
 
     miqService.miqFlash('warn', __('All changes have been reset'));
   };
+
+  vm.cancelClicked = function() {
+    miqService.sparkleOn();
+    if (vm.newRecord) {
+      miqService.redirectBack(sprintf(__('Creation of new %s was canceled by the user.'), vm.entity), 'warning', vm.redirectUrl);
+    } else {
+      miqService.redirectBack(sprintf(__('Edit of %s \"%s\" was canceled by the user.'), vm.entity, vm.genericObjectDefinitionModel.name), 'warning', vm.redirectUrl);
+    }
+  };
+
 
   // private functions
   function getGenericObjectDefinitionFormData(response) {
