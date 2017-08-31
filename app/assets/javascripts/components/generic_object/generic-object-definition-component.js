@@ -60,7 +60,7 @@ function genericObjectDefinitionFormController(API, miqService, $timeout) {
   };
 
   vm.resetClicked = function(angularForm) {
-    vm.genericObjectDefinitionModel = angular.copy(vm.modelCopy);
+    vm.genericObjectDefinitionModel = Object.assign({}, vm.modelCopy);
 
     assignAllObjectsToKeyValueArrays(true);
 
@@ -89,7 +89,6 @@ function genericObjectDefinitionFormController(API, miqService, $timeout) {
     assignAllObjectsToKeyValueArrays();
 
     vm.afterGet = true;
-    vm.modelCopy = angular.copy( vm.genericObjectDefinitionModel );
 
     miqService.sparkleOff();
   }
@@ -116,6 +115,9 @@ function genericObjectDefinitionFormController(API, miqService, $timeout) {
     vm.genericObjectDefinitionModel.noOfMethodRows = assignObjectToKeyValueArrays(
       vm.genericObjectDefinitionModel.properties.methods,
       vm.genericObjectDefinitionModel.method_names);
+
+    vm.modelCopy = Object.assign({}, vm.genericObjectDefinitionModel);
+    vm.modelCopy = Object.freeze(vm.modelCopy);
   }
 
   function assignObjectToKeyValueArrays(obj, keyArray, valueArray) {
