@@ -7,6 +7,9 @@ ManageIQ.angular.app.component('genericObjectTableComponent', {
     valueOptions: '=',
     newRecord: '=',
     noOfRows: '=',
+    afterGet: '<',
+    tableRendered: '=',
+    tableChanged: '=',
     angularForm: '=',
   },
   controllerAs: 'vm',
@@ -24,6 +27,33 @@ function genericObjectTableController($timeout) {
 
     if (vm.newRecord) {
       vm.addRow(0, vm.keyType + '0', true);
+    }
+
+    vm.tableRendered = true;
+
+    console.log(vm.afterGet);
+    console.log(vm.keys);
+    vm.keysCopy = angular.copy(vm.keys);
+    vm.valuesCopy = angular.copy(vm.values);
+  };
+
+  // vm.$doCheck = function() {
+  //   if (!angular.equals(vm.keys, vm.keysCopy)) {
+  //     // vm.tableChanged = true;
+  //     console.log("changed");
+  //     angularForm.$se
+  //   } else {
+  //     // vm.tableChanged = false;
+  //     console.log("not changed");
+  //   }
+  // };
+
+  vm.tableChanged2 = function() {
+    if (!angular.equals(vm.keys, vm.keysCopy) || !angular.equals(vm.values, vm.valuesCopy)) {
+      vm.tableChanged = true;
+    } else {
+      vm.tableChanged = false;
+      // console.log("not changed");
     }
   };
 
@@ -49,5 +79,7 @@ function genericObjectTableController($timeout) {
     if (vm.noOfRows === 0) {
       vm.addRow(0, vm.keyType + '0', true);
     }
+
+    vm.tableChanged2();
   };
 }

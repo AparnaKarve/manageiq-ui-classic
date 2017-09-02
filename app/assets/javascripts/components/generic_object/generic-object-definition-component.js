@@ -33,7 +33,10 @@ function genericObjectDefinitionFormController(API, miqService, $timeout, $q) {
       association_names: [],
       association_classes: [],
       method_names: [],
+      tableChanged: false,
     };
+
+    vm.tableRendered = false;
 
     var optionsPromise = API.options('/api/generic_object_definitions/')
       .then(getGenericObjectDefinitionOptions)

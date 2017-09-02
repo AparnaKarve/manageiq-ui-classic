@@ -18,7 +18,7 @@
               :title     => t,
               :alt       => t,
               'ng-if'    => '!vm.newRecord',
-              :enabled   => "!angularForm.$pristine || angularForm.$invalid",
+              :enabled   => "!angularForm.$pristine",
               'on-click' => "vm.resetClicked(angularForm)"}
   %miq-button{:name      => t = _("Cancel"),
               :title     => t,
