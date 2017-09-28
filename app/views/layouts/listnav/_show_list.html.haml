@@ -1,6 +1,8 @@
+- filename = render_listnav_filename
 - if @def_searches.blank? && @my_searches.blank?
   %br
-  = render :partial => 'layouts/info_msg', :locals => {:message => _("No filters defined.")}
+  -#= render :partial => 'layouts/info_msg', :locals => {:message => _("No filters defined.")}
+  = render :partial => "layouts/listnav/#{controller_name}_show_list_explorer" if controller.send(:show_list_explorer)
 - else
   #accordion.panel-group
     - unless @def_searches.blank?
@@ -27,10 +29,11 @@
                 :title        => _("Apply this filter"),
                 :onclick      => "return miqCheckForChanges()")
 
+    = render :partial => "layouts/listnav/#{controller_name}_show_list_explorer" if controller.send(:show_list_explorer)
     - unless @my_searches.blank?
       - if @panels["#{@view.db}_my_searches"].nil?
         - @panels["#{@view.db}_my_searches"] = true
-      = miq_accordion_panel(_("My Filters"), false, "#{@view.db}_my_searches") do
+      = miq_accordion_panel(_("My Filters1"), false, "#{@view.db}_my_searches") do
         %ul.nav.nav-pills.nav-stacked
           - @my_searches.each do |search|
             - li_class = ""
@@ -49,6 +52,9 @@
                 "data-method" => :post,
                 :title        => _("Apply this filter"),
                 :onclick      => "return miqCheckForChanges()")
+
+
+
 
 
   - if @edit && @edit[:expression] && @edit[:expression][:selected] && (@settings[:default_search] || (@edit[:expression][:selected][:id].to_i != settings(:default_search, @edit[@expkey][:exp_model].to_s.to_sym).to_i) || (!settings(:default_search, @edit[@expkey][:exp_model].to_s.to_sym)))

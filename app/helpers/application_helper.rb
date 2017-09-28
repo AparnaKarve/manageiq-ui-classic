@@ -1503,7 +1503,7 @@ module ApplicationHelper
              ems_storage
              flavor
              floating_ip
-             generic_object_definition
+             generic_object_definition1
              host
              host_aggregate
              load_balancer

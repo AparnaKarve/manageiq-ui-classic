@@ -88,3 +88,23 @@
                           'picture-url-path' => '{{vm.genericObjectDefinitionModel.picture.image_href}}'}
 
 = render :partial => "layouts/angular/generic_form_buttons"
+  .form-group
+    %label.col-md-2.control-label{"for" => "generic_object_definition_file"}
+      = _("Image File")
+    .col-md-4
+      %input.form-control{"type"        => "file",
+                          "class" => "filestyle",
+                          "id"          => "generic_object_definition_file",
+                          "name"        => "file",
+                          "ng-model"    => "vm.genericObjectDefinitionModel.file"}
+    .col-md-4
+      %miq-button.bootstrap-filestyle.input-group{:name      => t = _("Upload File"),
+          :title     => t,
+          :alt       => t,
+          :enabled   => "!vm.fileNameNotAvailable()",
+          'on-click' => "vm.uploadClicked(angularForm)"}
+
+  = render :partial => "layouts/angular/generic_form_buttons"
+
+:javascript
+  $(":file").filestyle({placeholder: _("No file chosen"), icon: false});

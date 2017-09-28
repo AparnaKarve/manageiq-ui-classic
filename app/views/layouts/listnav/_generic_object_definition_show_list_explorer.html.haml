@@ -1,0 +1,33 @@
+= miq_accordion_panel(_("Generic Object Classes"), true, "god") do
+  -#%div#tree{'ng-controller' => 'treeViewController as vm'}
+  -#  %miq-tree-view{:name       => 'god_tree',
+  -#                       :data       => '[{"key":"root","nodes":[{"key":"xx-fr","text":"Red Hat Satellite Providers","tooltip":"Red Hat Satellite Providers","icon":"pficon pficon-folder-close","selectable":true,"nodes":[{"key":"fr-10r16","text":"Satellite 6 Configuration Manager","tooltip":"Provider: Satellite 6 Configuration Manager","selectable":true,"image":"/assets/svg/vendor-foreman_configuration-78df9cb4e2856c5532cbe8c0f3df34da14bbd3e5b4135e619bf5f3ff69b795ce.svg","lazyLoad":true,"state":{"expanded":false},"class":""}],"state":{"expanded":false},"class":""}],"text":"All Configuration Manager Providers","tooltip":"All Configuration Manager Providers","icon":"pficon pficon-folder-close","state":{"expanded":true},"class":""}]',
+  -#                       'on-select' => "vm.nodeSelect(node, '/#{request.parameters[:controller]}/tree_select')",
+  -#                       }
+  %generic-object-definition-treeview-component{'current-controller' => 'generic_object_definition'}
+:javascript
+  // miq_bootstrap('#tree', 'ManageIQ.treeView');
+  miq_bootstrap('generic-object-definition-treeview-component');
+
+-#:javascript
+-#  $('#tree').treeview({data: '[{"key":"root","nodes":[{"key":"xx-fr","text":"Red Hat Satellite Providers","tooltip":"Red Hat Satellite Providers","icon":"pficon pficon-folder-close","selectable":true,"nodes":[{"key":"fr-10r16","text":"Satellite 6 Configuration Manager","tooltip":"Provider: Satellite 6 Configuration Manager","selectable":true,"image":"/assets/svg/vendor-foreman_configuration-78df9cb4e2856c5532cbe8c0f3df34da14bbd3e5b4135e619bf5f3ff69b795ce.svg","lazyLoad":true,"state":{"expanded":false},"class":""}],"state":{"expanded":false},"class":""}],"text":"All Configuration Manager Providers","tooltip":"All Configuration Manager Providers","icon":"pficon pficon-folder-close","state":{"expanded":true},"class":""}]'});
+-#
+-#
+-##accordion.panel-group{'ng-controller' => 'treeViewController as vm'}
+-#  -# Set the first accordion as selected if there is no active_accord in the sandbox
+-#  - selected = @accords.find(-> { @accords.first }) { |accord| accord[:name].to_sym == @sb[:active_accord] }
+-#  - @accords.each do |accord|
+-#    = miq_accordion_panel(accord[:title], selected == accord, accord[:container]) do
+-#      -# Set the first tree to be rendered if there is a mismatch with the name/type
+-#      - tree = @trees.find(-> { @trees.first }) { |t| t.type == accord[:name].to_sym  }
+-#      %miq-tree-view{:name       => tree.name,
+-#                       :data       => "vm.data['#{tree.name}']",
+-#                       :reselect   => tree.locals_for_render[:allow_reselect],
+-#                       "ng-init"   => "vm.initData('#{tree.name}', '#{tree.locals_for_render[:bs_tree]}', '#{tree.locals_for_render[:select_node]}')",
+-#                       'on-select' => "vm.nodeSelect(node, '/#{request.parameters[:controller]}/tree_select')",
+-#                       'selected'  => "vm.selectedNodes['#{tree.name}']",
+-#                       'persist'   => 'key',
+-#                       'lazy-load' => "(vm.lazyLoad(node, '#{tree.name}', '/#{request.parameters[:controller]}/tree_autoload'))"}
+-#  :javascript
+-#    miq_bootstrap('#accordion', 'ManageIQ.treeView');
+-#    $('#accordion').on('show.bs.collapse', miqAccordSelect);

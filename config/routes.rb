@@ -2093,6 +2093,9 @@ Rails.application.routes.draw do
 
     :generic_object_definition => {
       :get => %w(
+        button
+        custom_button_new
+        custom_button_group_new
         download_data
         download_summary_pdf
         edit
@@ -2103,6 +2106,8 @@ Rails.application.routes.draw do
       ),
       :post => %w(
         button
+        custom_button_new
+        custom_button_group_new
         create_del
         edit
         exp_button
@@ -2115,6 +2120,7 @@ Rails.application.routes.draw do
         show_list
         tag_edit_form_field_changed
         tagging_edit
+        tree_select
       ) +
         adv_search_post +
         save_post
@@ -2180,7 +2186,6 @@ Rails.application.routes.draw do
         create_method
         create_ns
         domains_priority_edit
-        embedded_methods_remove
         explorer
         expand_toggle
         field_accept
@@ -2948,7 +2953,6 @@ Rails.application.routes.draw do
         retire
         service_form_fields
         show
-        tagging_edit
       ),
       :post => %w(
         button
@@ -2960,7 +2964,6 @@ Rails.application.routes.draw do
         service_edit
         service_tag
         tag_edit_form_field_changed
-        tagging_edit
         tree_autoload
         tree_select
         x_button

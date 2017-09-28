@@ -1,3 +1,7 @@
+#accordion.panel-group
+  = miq_accordion_panel(_("Generic Object Classes"), true, "god") do
+    %generic-object-definition-treeview-component{'current-controller' => 'generic_object_definition'}
+
 - if @record.try(:name)
   #accordion.panel-group
     = miq_accordion_panel(_("Properties"), false, "god_prop") do
@@ -11,3 +15,6 @@
             :tables        => 'instances',
             :record        => @record,
             :display       => 'generic_objects')
+
+:javascript
+  miq_bootstrap('generic-object-definition-treeview-component');

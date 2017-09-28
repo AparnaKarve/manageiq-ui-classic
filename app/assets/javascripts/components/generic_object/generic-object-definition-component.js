@@ -8,9 +8,9 @@ ManageIQ.angular.app.component('genericObjectDefinitionComponent', {
   templateUrl: '/static/generic_object/generic_object_definition.html.haml',
 });
 
-genericObjectDefinitionFormController.$inject = ['API', 'miqService', '$q'];
+genericObjectDefinitionFormController.$inject = ['API', 'miqService', '$q', '$timeout'];
 
-function genericObjectDefinitionFormController(API, miqService, $q) {
+function genericObjectDefinitionFormController(API, miqService, $q, $timeout) {
   var vm = this;
 
   vm.$onInit = function() {
@@ -42,6 +42,7 @@ function genericObjectDefinitionFormController(API, miqService, $q) {
       associationsTableChanged: false,
       method_names: [],
       methodsTableChanged: false,
+      file: '',
     };
 
     vm.tableRendered = false;
@@ -98,6 +99,37 @@ function genericObjectDefinitionFormController(API, miqService, $q) {
     var saveMsg = sprintf(__('%s \"%s\" has been successfully added.'), vm.entity, vm.genericObjectDefinitionModel.name);
     vm.saveWithAPI('post', '/api/generic_object_definitions/', vm.prepSaveObject(), saveMsg);
   };
+
+  vm.uploadClicked = function() {
+    // var f = document.getElementById('file').files[0],
+    var reader = new FileReader();
+    var result;
+
+    // vm.fileUploaded = false;
+    var imageFile = angularForm.file.files[0];
+
+    console.log(vm.fileNameNotAvailable());
+
+    reader.addEventListener("load", function () {
+      result = reader.result;
+      console.log(result);
+      // vm.fileUploaded = true;
+
+      API.post('/api/pictures/', {extension: 'png', content: btoa(result)})
+        .then(setPicture)
+        .catch(miqService.handleFailure);
+
+    }, false);
+
+    if (imageFile) {
+      reader.readAsDataURL(imageFile);
+      // reader.readAsArrayBuffer(imageFile);
+    }
+  };
+
+  vm.fileNameNotAvailable = function() {
+    angularForm.file.files.length === 0;
+  }
 
   vm.prepSaveObject = function() {
     vm.genericObjectDefinitionModel.properties.attributes = {};
@@ -226,5 +258,9 @@ function genericObjectDefinitionFormController(API, miqService, $q) {
   function promisesResolvedForLoad() {
     vm.afterGet = true;
     miqService.sparkleOff();
+  }
+
+  function setPicture() {
+    console.log("Picture set");
   }
 }

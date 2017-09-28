@@ -4,6 +4,6 @@ class ApplicationHelper::Button::GenericObjectDefinitionDeleteButton < Applicati
   end
 
   def disabled?
-    !@record.generic_objects.count.zero?
+    !@record.try(:generic_objects).try(:count).try(:zero?)
   end
 end

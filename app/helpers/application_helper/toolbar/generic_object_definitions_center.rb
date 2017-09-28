@@ -33,4 +33,31 @@ class ApplicationHelper::Toolbar::GenericObjectDefinitionsCenter < ApplicationHe
       ]
     )
   ])
+  button_group('generic_object_definition_custom_buttons', [
+    select(
+      :generic_object_definition_customization,
+      'fa fa-cog fa-lg',
+      t = N_('Customization'),
+      t,
+      :items => [
+        button(
+          :generic_object_definition_custom_button_group_new,
+          'pficon pficon-add-circle-o fa-lg',
+          t = N_('Add a new Custom Button Group'),
+          t,
+          :klass   => ApplicationHelper::Button::GenericObjectDefinitionCustomGroup,
+          :enabled   => false,
+          :onwhen    => "1",
+          :url_parms => "custom_button_group_new_div"),
+        button(
+          :generic_object_definition_custom_button_new,
+          'pficon pficon-add-circle-o fa-lg',
+          t = N_('Add a new Custom Button'),
+          t,
+          :enabled   => false,
+          :onwhen    => "1",
+          :url_parms => "custom_button_new_div"),
+      ]
+    )
+  ])
 end
