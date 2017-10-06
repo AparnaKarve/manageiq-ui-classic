@@ -8,15 +8,21 @@ ManageIQ.angular.app.component('genericObjectDefinitionComponent', {
   templateUrl: '/static/generic_object/generic_object_definition.html.haml',
 });
 
-genericObjectDefinitionFormController.$inject = ['API', 'miqService', '$q'];
+genericObjectDefinitionFormController.$inject = ['API', 'miqService', '$q', '$timeout'];
 
-function genericObjectDefinitionFormController(API, miqService, $q) {
+function genericObjectDefinitionFormController(API, miqService, $q, $timeout) {
   var vm = this;
 
   vm.$onInit = function() {
     vm.entity = __('Generic Object Class');
     vm.saveable = miqService.saveable;
     vm.afterGet = false;
+
+    vm.imageUploadStatus = "";
+    vm.imageUploaded = false;
+    vm.changeImage = false;
+
+    vm.pictureReset = false;
 
     vm.attributeTableHeaders = [__("Name"), __("Type")];
     vm.associationTableHeaders = [__("Name"), __("Class")];
@@ -28,6 +34,9 @@ function genericObjectDefinitionFormController(API, miqService, $q) {
     vm.genericObjectDefinitionModel = {
       name: '',
       description: '',
+      picture_url_path: '',
+      picture: {},
+      pictureUpladed: false,
       properties: {},
       attribute_names: [],
       attribute_types: [],
@@ -48,7 +57,7 @@ function genericObjectDefinitionFormController(API, miqService, $q) {
     if (vm.recordId) {
       vm.newRecord = false;
       miqService.sparkleOn();
-      var dataPromise = API.get('/api/generic_object_definitions/' + vm.recordId)
+      var dataPromise = API.get('/api/generic_object_definitions/' + vm.recordId + '?attributes=picture_url_path')
         .then(getGenericObjectDefinitionFormData)
         .catch(miqService.handleFailure);
 
@@ -76,6 +85,8 @@ function genericObjectDefinitionFormController(API, miqService, $q) {
 
     assignAllObjectsToKeyValueArrays(true);
 
+    vm.pictureReset = ! vm.pictureReset;
+
     angularForm.$setUntouched(true);
     angularForm.$setPristine(true);
 
@@ -90,6 +101,45 @@ function genericObjectDefinitionFormController(API, miqService, $q) {
   vm.addClicked = function() {
     var saveMsg = sprintf(__('%s \"%s\" has been successfully added.'), vm.entity, vm.genericObjectDefinitionModel.name);
     vm.saveWithAPI('post', '/api/generic_object_definitions/', vm.prepSaveObject(), saveMsg);
+  };
+
+  vm.uploadClicked = function() {
+    var reader = new FileReader();
+    var imageFile = angularForm.generic_object_definition_image_file.files[0];
+
+    vm.imageUploadStatus = "";
+
+    if (imageFile.type === 'image/png') {
+      vm.genericObjectDefinitionModel.picture.extension = 'png';
+    } else if (imageFile.type === 'image/jpg') {
+      vm.genericObjectDefinitionModel.picture.extension = 'jpg';
+    } else if (imageFile.type === 'image/jpeg') {
+      vm.genericObjectDefinitionModel.picture.extension = 'jpeg';
+    } else {
+      // $timeout(function(){
+        vm.imageUploadStatus = __("Incompatible image type");
+        angular.element('generic_object_definition_image_file').$setValidity("incompatibleFileType", false);
+        return;
+      // });
+      // vm.imageUploadStatus = __("Incompatible image type");
+      // angularForm['generic_object_definition_image_file'].$setValidity("incompatibleFileType", false);
+      // return;
+    }
+
+    reader.onload = function(event) {
+      vm.genericObjectDefinitionModel.picture.content = btoa(event.target.result);
+
+      $timeout(function(){
+        vm.imageUploadStatus = __("Image upload complete");
+      });
+    };
+
+    if (imageFile) {
+      // reader.readAsDataURL(imageFile); readAsBinaryString
+      reader.readAsBinaryString(imageFile);
+    } else {
+      vm.imageUploadStatus = __("No file chosen");
+    }
   };
 
   vm.prepSaveObject = function() {
@@ -109,11 +159,17 @@ function genericObjectDefinitionFormController(API, miqService, $q) {
       vm.genericObjectDefinitionModel.properties.methods = vm.genericObjectDefinitionModel.method_names;
     }
 
-    return {
+    var preppedObject =  {
       name: vm.genericObjectDefinitionModel.name,
       description: vm.genericObjectDefinitionModel.description,
       properties: vm.genericObjectDefinitionModel.properties,
     };
+
+    if (vm.genericObjectDefinitionModel.picture !== {}) {
+      preppedObject.picture = vm.genericObjectDefinitionModel.picture;
+    }
+
+    return preppedObject;
   };
 
   vm.saveWithAPI = function(method, url, saveObject, saveMsg) {

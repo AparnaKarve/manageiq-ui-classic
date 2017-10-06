@@ -79,4 +79,50 @@
                                       "table-rendered"   => "vm.tableRendered",
                                       "unique-property"  => "vm.uniqueProperty('Methods')",
                                       "angular-form"     => "angularForm"}
-= render :partial => "layouts/angular/generic_form_buttons"
+  %custom-image-component{'picture-url-path' => 'vm.genericObjectDefinitionModel.picture_url_path',
+  'new-record' => "vm.newRecord",
+  'angular-form' => 'angularForm',
+  'picture-url-path' => '{{vm.genericObjectDefinitionModel.picture_url_path}}',
+  'picture-uploaded' => 'vm.genericObjectDefinitionModel.pictureUploaded',
+  'picture-reset' => 'vm.pictureReset',
+  'picture' => 'vm.genericObjectDefinitionModel.picture',}
+  -#.form-group{"ng-show" => "vm.newRecord || vm.changeImage"}
+  -#  %label.col-md-2.control-label{"for" => "custom_image"}
+  -#    = _("Custom Image File")
+  -#  .col-md-4
+  -#    %input.form-control{"type"        => "file",
+  -#                        "class"       => "filestyle",
+  -#                        "id"          => "generic_object_definition_image_file",
+  -#                        "name"        => "generic_object_definition_image_file",
+  -#                        "image-file-upload1" => "",
+  -#                        "ng-model"    => "vm.genericObjectDefinitionModel.picture.content"}
+  -#    {{vm.imageUploadStatus}}
+  -#  .col-md-4
+  -#    %miq-button{:name      => t = _("Upload chosen File"),
+  -#                :title     => t,
+  -#                :alt       => t,
+  -#                :enabled   => "true",
+  -#                'on-click' => "vm.uploadClicked(angularForm)"}
+  -#.form-group{'ng-if' => "vm.genericObjectDefinitionModel.picture_url_path !== '' && vm.imageUploadStatus === '' && !vm.changeImage"}
+  -#  %label.col-md-2.control-label{"for" => "custom_image"}
+  -#    = _("Current Custom Image File")
+  -#  .col-md-4
+  -#    %img.form-control{'ng-src' => "{{vm.genericObjectDefinitionModel.picture_url_path}}", :style => "width:100px; height:100px;"}
+  -#.form-group{'ng-if' => "vm.genericObjectDefinitionModel.picture_url_path !== '' && vm.imageUploadStatus === '' || vm.changeImage"}
+  -#  %label.col-md-2.control-label{"for" => "update_image"}
+  -#    = _("Update Current Image")
+  -#  .col-md-4
+  -#    %input.form-control{"type"      => "checkbox",
+  -#                        "id"        => "update_image",
+  -#                        "name"      => "update_image",
+  -#                        "bs-switch" => "",
+  -#                        :data       => {:on_text => _('Yes'), :off_text => _('No'), :size => 'mini'},
+  -#                        "ng-model"  => "vm.changeImage"}
+
+
+
+  = render :partial => "layouts/angular/generic_form_buttons"
+
+
+:javascript
+  $(":file").filestyle({placeholder: _("No file chosen"), icon: false});
