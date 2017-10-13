@@ -175,4 +175,8 @@ ManageIQ.angular.app.service('miqService', ['$timeout', '$document', '$q', 'API'
 
     $window.location.href = redirectUrl;
   };
+  
+  this.saveData = function(data) {
+    this.myData = data;
+  }
 }]);

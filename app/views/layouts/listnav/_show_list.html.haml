@@ -27,6 +27,7 @@
                 :title        => _("Apply this filter"),
                 :onclick      => "return miqCheckForChanges()")
 
+    = render :partial => "layouts/listnav/#{controller_name}_show_list_explorer" if controller_name == "generic_object_definition"
     - unless @my_searches.blank?
       - if @panels["#{@view.db}_my_searches"].nil?
         - @panels["#{@view.db}_my_searches"] = true

@@ -7,13 +7,31 @@ ManageIQ.angular.app.component('genericObjectDefinitionToolbar', {
   controller: genericObjectDefinitionToolbarController,
 });
 
-genericObjectDefinitionToolbarController.$inject = ['API', 'miqService', '$window'];
+genericObjectDefinitionToolbarController.$inject = ['API', 'miqService', '$window', '$timeout'];
 
-function genericObjectDefinitionToolbarController(API, miqService, $window) {
+function genericObjectDefinitionToolbarController(API, miqService, $window, $timeout) {
   var toolbar = this;
+
+  console.log(ManageIQ.angular.app.treeData);
+
+  angular.element(document).ready(function () {
+    // miqService.sparkleOn();
+    // $('#listnav_div').html('hi');
+    // miqService.sparkleOff();
+
+    $timeout(function() {
+      $('#listnav_div').html(localStorage.getItem("lastname"));
+      // miqService.sparkleOff();
+    });
+  });
 
   ManageIQ.angular.rxSubject.subscribe(function(event) {
     toolbar.action = event.type;
+    toolbar.td = 'xxxn';
+
+    console.log("jjj");
+
+    // $('#listnav_div').html("abc");
 
     if (toolbar.action) {
       if (toolbar.genericObjectDefinitionId) {
