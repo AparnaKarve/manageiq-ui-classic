@@ -1,25 +1,18 @@
-%form.form-horizontal{"name"         => "angularForm",
-                      "model-copy"   => "vm.modelCopy",
-                      "model"        => "vm.customButtonGroupModel",
-                      "ng-show"      => "vm.afterGet",
-                      "ng-cloak"     => "",
-                      "form-changed" => true,
-                      "miq-form"     => true}
-  %br
-  .form-group{"ng-class" => "{'has-error': angularForm.name.$invalid}"}
+%br
+  .form-group{"ng-class" => "{'has-error': vm.angularForm.name.$invalid}"}
     %label.col-md-2.control-label{"for" => "custom_button_group_name"}
       = _("Text")
     .col-md-8
       %input.form-control{"type"        => "text",
                           "id"          => "custom_button_group_name",
                           "name"        => "name",
-                          "ng-model"    => "vm.customButtonGroupModel.name",
+                          "ng-model"    => "vm.model.name",
                           "maxlength"   => ViewHelper::MAX_NAME_LEN,
                           "required"    => "",
                           "auto-focus"  => ""}
-      %span.help-block{"ng-show" => "angularForm.name.$error.required"}
+      %span.help-block{"ng-show" => "vm.angularForm.name.$error.required"}
         = _("Required")
-  .form-group{"ng-class" => "{'has-error': angularForm.display.$invalid}"}
+  .form-group{"ng-class" => "{'has-error': vm.angularForm.display.$invalid}"}
     %label.col-md-2.control-label{"for" => "custom_button_group_display"}
       = _("Display Text on Button")
     .col-md-8
@@ -27,25 +20,25 @@
                           "id"          => "custom_button_group_display",
                           "name"        => "display",
                           "bs-switch"   => "",
-                          "ng-model"    => "vm.customButtonGroupModel.display"}
-  .form-group{"ng-class" => "{'has-error': angularForm.description.$invalid}"}
+                          "ng-model"    => "vm.model.display"}
+  .form-group{"ng-class" => "{'has-error': vm.angularForm.description.$invalid}"}
     %label.col-md-2.control-label{"for" => "custom_button_group_description"}
       = _("Description")
     .col-md-8
       %input.form-control{"type"        => "text",
                           "id"          => "custom_button_group_description",
                           "name"        => "description",
-                          "ng-model"    => "vm.customButtonGroupModel.description",
+                          "ng-model"    => "vm.model.description",
                           "maxlength"   => ViewHelper::MAX_NAME_LEN,
                           "required"    => ""}
-      %span.help-block{"ng-show" => "angularForm.description.$error.required"}
+      %span.help-block{"ng-show" => "vm.angularForm.description.$error.required"}
         = _("Required")
-  .form-group{"ng-class" => "{'has-error': angularForm.button_icon.$invalid}"}
+  .form-group{"ng-class" => "{'has-error': vm.angularForm.button_icon.$invalid}"}
     %label.control-label.col-md-2
       = _('Icon')
     .col-md-8
       %miq-fonticon-picker{'input-name'   => 'button_icon',
-                           :selected      => "{{vm.customButtonGroupModel.button_icon}}",
+                           :selected      => "{{vm.model.button_icon}}",
                            'icon-changed' => 'vm.iconSelect(selected)'}
         %miq-fonticon-family{:selector => 'ff', :title => 'Font Fabulous'}
         %miq-fonticon-family{:selector => 'pficon', :title => 'PatternFly'}
@@ -53,19 +46,17 @@
       %input.form-control{"type"        => "hidden",
                           "id"          => "custom_button_group_icon",
                           "name"        => "button_icon",
-                          "ng-model"    => "vm.customButtonGroupModel.button_icon",
+                          "ng-model"    => "vm.model.button_icon",
                           "maxlength"   => ViewHelper::MAX_NAME_LEN,
                           "required"    => ""}
-      %span.help-block{"ng-show" => "angularForm.button_icon.$error.required"}
+      %span.help-block{"ng-show" => "vm.angularForm.button_icon.$error.required"}
         = _("Required")
-  .form-group{"ng-class" => "{'has-error': angularForm.button_color.$invalid}"}
+  .form-group{"ng-class" => "{'has-error': vm.angularForm.button_color.$invalid}"}
     %label.control-label.col-md-2
       = _('Icon Color')
     .col-md-8
       -# Remove the default #4d5258 value when using a color picker with nil support
       = color_field_tag("color",
                         '#4d5258',
-                        "ng-model" => "vm.customButtonGroupModel.button_color",
+                        "ng-model" => "vm.model.button_color",
                         :class     => "form-control")
-
-  = render :partial => "layouts/angular/generic_form_buttons"
