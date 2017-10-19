@@ -7,15 +7,16 @@ ManageIQ.angular.app.component('genericObjectDefinitionTreeviewComponent', {
   templateUrl: '/static/generic_object/generic_object_definition_treeview.html.haml',
 });
 
-genericObjectDefinitionTreeviewController.$inject = ['$http', '$scope', 'API', 'miqService'];
+genericObjectDefinitionTreeviewController.$inject = ['$http', '$scope', 'API', 'miqService', '$timeout'];
 
-function genericObjectDefinitionTreeviewController($http, $scope, API, miqService) {
+function genericObjectDefinitionTreeviewController($http, $scope, API, miqService, $timeout) {
   var vm = this;
   vm.$http = $http;
   vm.$scope = $scope;
   vm.selectedNodes = {};
   vm.data = {};
   vm.godNodes = [];
+  vm.treeData = [];
 
   vm.treeData1 = '[{"key":"root",' +
     '"nodes":[{"key":"xx-fr",' +
@@ -42,24 +43,11 @@ function genericObjectDefinitionTreeviewController($http, $scope, API, miqServic
     '"class":""}' +
     ']';
 
-  // vm.treeDataObj = [{
-  //   key: 'root',
-  //   text: 'All Generic Object Classes',
-  //   tooltip: 'All Generic Object Classes',
-  //   icon: 'pficon pficon-folder-close',
-  //   state: {expanded: true},
-  //   nodes: [{key: 'node1', text: 'node1', tooltip: 'node1', icon: 'fa fa-remove', state: {expanded: false}},
-  //           {key: 'node2', text: 'node2', tooltip: 'node2', icon: 'fa fa-plus', state: {expanded: false}}]
-  // }];
-  //
-  // vm.treeData = JSON.stringify(vm.treeDataObj);
-  // console.log(vm.treeData);
-
   vm.$onInit = function() {
-    getGenericObjectDefinitionNodes();
-
-
-
+    $timeout(function() {
+      getGenericObjectDefinitionNodes();
+    });
+    // getGenericObjectDefinitionNodes();
   };
 
   // ManageIQ.angular.rxSubject.subscribe(function(payload) {
@@ -74,7 +62,7 @@ function genericObjectDefinitionTreeviewController($http, $scope, API, miqServic
   // vm.initSelected = function(tree, node) {
   //   vm.selectedNodes[tree] = vm.selectedNodes[tree] || { key: node };
   // };
-
+  //
   // vm.initData = function(tree, data, selected) {
   //   vm.data[tree] = vm.data[tree] || data;
   //   vm.selectedNodes[tree] = vm.selectedNodes[tree] || { key: selected };
@@ -92,37 +80,49 @@ function genericObjectDefinitionTreeviewController($http, $scope, API, miqServic
   //   });
   // };
 
-  vm.nodeSelect = function(node, path) {
-    // var url = path + '?id=' + encodeURIComponent(node.key.split('__')[0]);
-    // miqJqueryRequest(url, {beforeSend: true});
-
-    // $http.get('/generic_object_definition/show/10000000000001')
-    //   .then(setNodes)
-    //   .catch(miqService.handleFailure);
-
-    miqService.saveData("Hi there");
-
-    ManageIQ.angular.app.treeData = "jjj";
-    sendDataWithRx({treeData: 'power_on', controller: "genericObjectDefinitionToolbarController"});
-
-    localStorage.setItem("lastname", $('#listnav_div').html());
-
-    miqService.sparkleOn();
-    window.location.href = '/generic_object_definition/show/10000000000001';
-
-    // $.get('/generic_object_definition/show/10000000000001', function(data, status){
-    //   // alert("Data: " + data + "\nStatus: " + status);
-    //   console.log(status);
-    //
-    //   window.location.href = '/generic_object_definition/show/10000000000001';
-    // });
+  vm.nodeSelect = function(node) {
+    var key = node.key.split('_');
+    // miqService.sparkleOn();
+    switch(key[0]) {
+      case 'god':
+        if (key[1] === 'root') {
+          window.location.href = '/generic_object_definition/show_list';
+        } else {
+          window.location.href = '/generic_object_definition/show/' + key[1];
+          // $timeout(function() {
+          //   window.location.href = '/generic_object_definition/show/' + key[1];
+          // });
+          // window.location.href = '/generic_object_definition/show/' + key[1];
+          // history.pushState({ path: this.path }, '', '/generic_object_definition/show/' + key[1]);
+          // window.location.href = '/generic_object_definition/show/' + key[1];
+          // $.get('/generic_object_definition/show/' + key[1], function(data) {
+          //   // $('#center_div').slideTo(data)
+          //   $('#center_div').html(data);
+          // });
+        }
+        break;
+      case 'cbs':
+        var parentKey = node.key.split('-');
+        var urlParams = new URLSearchParams(window.location.search);
+        console.log(urlParams);
+        // window.location.href = '/generic_object_definition/show/' + parentKey[1] + '?attributes=' + node.key;
+        window.location.href = node.link;
+        // if (key[1] === 'root') {
+        //   window.location.href = '/generic_object_definition/show_list';
+        // } else {
+        //   window.location.href = '/generic_object_definition/show/' + key[1];
+        // }
+        break;
+      default:
+        window.location.href = '/generic_object_definition/show_list';
+    }
   };
 
 
   // private functions
 
   function getGenericObjectDefinitionNodes() {
-    API.get('/api/generic_object_definitions?expand=resources&attributes=name,picture.image_href&sort_by=name&sort_options=ignore_case&sort_order=asc')
+    API.get('/api/generic_object_definitions?expand=resources&attributes=name,picture.image_href,custom_button_sets&sort_by=name&sort_options=ignore_case&sort_order=asc')
       .then(setNodes)
       .catch(miqService.handleFailure);
   }
@@ -130,6 +130,8 @@ function genericObjectDefinitionTreeviewController($http, $scope, API, miqServic
   function setNodes(response) {
     var image;
     var icon;
+    var selected;
+    // console.log(window.location.href);
     _.forEach(response.resources, function(resource) {
       if (resource.picture && resource.picture.image_href) {
         image = resource.picture.image_href;
@@ -138,25 +140,70 @@ function genericObjectDefinitionTreeviewController($http, $scope, API, miqServic
         image = undefined;
         icon = 'fa fa-file-text-o';
       }
+
+      if (resource.id === window.location.href.split("/").pop()) {
+        selected = true;
+      } else {
+        selected = false;
+      }
+
       vm.godNodes.push({
         key: 'god_' + resource.id,
         text: resource.name,
         tooltip: resource.name,
         image: image,
         icon: icon,
-        state: {expanded: false}
+        state: {expanded: false, selected: selected},
+        nodes: createCbsNodes(resource.custom_button_sets, resource.id),
       });
     });
 
+    if ('show_list' === window.location.href.split("/").pop()) {
+      selected = true;
+    } else {
+      selected = false;
+    }
+
     vm.treeDataObj = [{
-      key: 'root',
+      key: 'god_root',
       text: 'All Generic Object Classes',
       tooltip: 'All Generic Object Classes',
       icon: 'pficon pficon-folder-close',
-      state: {expanded: true},
+      state: {expanded: true, selected: selected},
       nodes: vm.godNodes,
     }];
 
     vm.treeData = JSON.stringify(vm.treeDataObj);
+  }
+
+  function createCbsNodes(cbs, parentId) {
+    var cbsChildNodes = [];
+
+    if (cbs.length > 0) {
+      _.forEach(cbs, function(set) {
+        cbsChildNodes.push({
+          // key: 'cbs_' + set.id + '-' + parentId,
+          key: 'cbs_' + set.id,
+          // link: '/generic_object_definition/show/' + parentId + '?attributes=' + 'cbs_' + set.id,
+          text: set.name,
+          tooltip: set.name,
+          icon: set.set_data.button_icon,
+          state: {expanded: false}
+        });
+      });
+
+      return [{
+        // key: 'cbs_root' + '-' + parentId,
+        key: 'cbs_root',
+        // link: '/generic_object_definition/show/' + parentId + '?attributes=' + 'cbs_root',
+        text: 'Actions',
+        tooltip: 'All Actions',
+        icon: 'pficon pficon-folder-close',
+        state: {expanded: false},
+        nodes: cbsChildNodes,
+      }];
+    } else {
+      return undefined;
+    }
   }
 }
