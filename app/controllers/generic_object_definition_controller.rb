@@ -3,6 +3,7 @@ class GenericObjectDefinitionController < ApplicationController
   before_action :get_session_data
 
   before_action :custom_button_or_group, :only => [:show]
+  before_action :build_tree, :only => [:show_list]
 
   after_action :cleanup_action
   after_action :set_session_data
@@ -30,6 +31,8 @@ class GenericObjectDefinitionController < ApplicationController
         { :action => 'edit', :id => from_cid(params[:id] || params[:miq_grid_checks]) }
       when 'generic_object_definition_custom_button_group_new'
         { :action => 'custom_button_group_new', :id => from_cid(params[:id] || params[:miq_grid_checks]) }
+      when 'generic_object_definition_custom_button_group_edit'
+        { :action => 'custom_button_group_edit', :id => from_cid(params[:id] || params[:miq_grid_checks]) }
       end
     )
   end
@@ -70,6 +73,43 @@ class GenericObjectDefinitionController < ApplicationController
     drop_breadcrumb(:name => _("Add a new Custom Button Group"), :url => "/generic_object_definition/custom_button_group_new")
     @generic_object_definition = GenericObjectDefinition.find(params[:id])
     @in_a_form = true
+  end
+
+  def custom_button_group_edit
+    assert_privileges('generic_object_definition_custom_button_group_edit')
+    drop_breadcrumb(:name => _("Add a new Custom Button Group"), :url => "/generic_object_definition/custom_button_group_new")
+    @generic_object_definition = GenericObjectDefinition.find(params[:id])
+    @in_a_form = true
+  end
+
+  def tree_autoload
+    @view ||= session[:view]
+    super
+  end
+
+  def tree_select
+    @lastaction = "explorer"
+    @flash_array = nil
+    self.x_active_tree = params[:tree] if params[:tree]
+    self.x_node = params[:id]
+    # load_or_clear_adv_search
+    # apply_node_search_text if x_active_tree == "#{manager_prefix}_providers_tree".to_sym
+
+    if action_name == "reload"
+      replace_right_cell(:replace_trees => [x_active_accord])
+    else
+      # @sb[:active_tab] = if active_tab_configured_systems?
+      #                      'configured_systems'
+      #                    else
+      #                      'summary'
+      #                    end
+      # replace_right_cell
+      render :new #something
+    end
+  end
+
+  def build_tree
+
   end
 
   private
