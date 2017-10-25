@@ -1,6 +1,8 @@
 class TreeBuilderGenericObjectDefinition < TreeBuilder
   has_kids_for GenericObjectDefinition, [:x_get_god_kids]
   has_kids_for Hash, [:x_get_actions_kids]
+  include CustomButtonsMixin
+  has_kids_for CustomButtonSet, [:x_get_tree_aset_kids]
 
   private
 
