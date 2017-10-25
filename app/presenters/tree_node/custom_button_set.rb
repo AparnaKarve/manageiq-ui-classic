@@ -16,6 +16,15 @@ module TreeNode
       end
     end
 
+    # set_attributes(:image, :icon) do
+    #   if @object.picture
+    #     image = @object.decorate.fileicon
+    #   else
+    #     icon = @object.decorate.fonticon
+    #   end
+    #   [image, icon]
+    # end
+
     set_attribute(:color) { @object.set_data.try(:[], :button_color) }
   end
 end

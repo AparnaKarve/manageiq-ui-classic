@@ -112,6 +112,13 @@ class GenericObjectDefinitionController < ApplicationController
 
   end
 
+  def tree_autoload
+    @view ||= session[:view]
+    super
+  end
+
+
+
   private
 
   def textual_group_list
