@@ -82,6 +82,14 @@ class GenericObjectDefinitionController < ApplicationController
     # @in_a_form = true
   end
 
+  def retrieve_distinct_instances_across_domains
+    distinct_instances_across_domains =
+      MiqAeClass.find_distinct_instances_across_domains(User.current_user, "SYSTEM/PROCESS").pluck(:name).sort.each do |instance|
+      {:name => instance}
+    end
+    render :json => {:distinct_instances_across_domains => distinct_instances_across_domains}
+  end
+
   def show_list_explorer
     true
   end

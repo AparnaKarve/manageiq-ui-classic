@@ -9,12 +9,15 @@ ManageIQ.angular.app.component('mainCustomButtonFormComponent', {
   templateUrl: '/static/generic_object/main_custom_button_form.html.haml',
 });
 
-mainCustomButtonFormController.$inject = ['API', 'miqService', '$q'];
+mainCustomButtonFormController.$inject = ['API', 'miqService', '$q', '$http'];
 
-function mainCustomButtonFormController(API, miqService, $q) {
+function mainCustomButtonFormController(API, miqService, $q, $http) {
   var vm = this;
 
   var optionsPromise = null;
+  var serviceDialogsPromise = null;
+  var rolesPromise = null;
+  var instancesPromise = null;
 
   vm.$onInit = function() {
     vm.entity = __('Custom Button');
@@ -68,7 +71,7 @@ function mainCustomButtonFormController(API, miqService, $q) {
       {id: 'role', name: __('<By Role>')},
     ];
 
-    // vm.customButtonRecordId = '10000000000022';
+    vm.customButtonRecordId = '10000000000027';
 
     // var dialogsPromise = API.get('/api/service_dialogs?expand=resources&attributes=label&sort_by=label&sort_order=asc&sort_options=ignore_case')
     //   .then(getServiceDialogs)
@@ -76,6 +79,18 @@ function mainCustomButtonFormController(API, miqService, $q) {
 
     optionsPromise = API.options('/api/custom_buttons')
       .then(getCustomButtonOptions)
+      .catch(miqService.handleFailure);
+
+    serviceDialogsPromise = API.get('/api/service_dialogs?expand=resources&attributes=label')
+      .then(getServiceDialogs)
+      .catch(miqService.handleFailure);
+
+    rolesPromise = API.get('/api/roles?expand=resources&attributes=name')
+      .then(getRoles)
+      .catch(miqService.handleFailure);
+
+    instancesPromise = $http.get('/generic_object_definition/retrieve_distinct_instances_across_domains')
+      .then(getDistinctInstancesAcrossDomains)
       .catch(miqService.handleFailure);
 
     if (vm.customButtonRecordId) {
@@ -93,7 +108,7 @@ function mainCustomButtonFormController(API, miqService, $q) {
       vm.modelCopy = angular.copy( vm.customButtonModel );
     }
 
-    $q.all([optionsPromise, dataPromise])
+    $q.all([optionsPromise, serviceDialogsPromise, rolesPromise, instancesPromise, dataPromise])
       .then(promisesResolvedForLoad);
   };
 
@@ -270,16 +285,26 @@ function mainCustomButtonFormController(API, miqService, $q) {
       vm.button_types.push({id: id, name: name});
     });
 
-    _.forEach(response.data.service_dialogs, function(item) {
-      vm.dialogs.push({id: item[0].toString(), label: item[1]});
-    });
-
     _.forEach(response.data.distinct_instances_across_domains, function(item) {
       vm.ae_instances.push({id: item, name: item});
     });
+  }
 
-    _.forEach(response.data.user_roles, function(item) {
-      vm.available_roles.push({name: item, value: false});
+  function getServiceDialogs(response) {
+    _.forEach(response.resources, function(item) {
+      vm.dialogs.push({id: item.id, label: item.label});
+    });
+  }
+
+  function getRoles(response) {
+    _.forEach(response.resources, function(item) {
+      vm.available_roles.push({name: item.name, value: false});
+    });
+  }
+
+  function getDistinctInstancesAcrossDomains(response) {
+    _.forEach(response.data.distinct_instances_across_domains, function(item) {
+      vm.ae_instances.push({id: item, name: item});
     });
   }
 
