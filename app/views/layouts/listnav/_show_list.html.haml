@@ -1,4 +1,4 @@
-- if @def_searches.blank? && @my_searches.blank?
+- if @def_searches.blank? && @my_searches.blank? && !controller.respond_to?(:display_tree)
   %br
   = render :partial => 'layouts/info_msg', :locals => {:message => _("No filters defined.")}
 - else
