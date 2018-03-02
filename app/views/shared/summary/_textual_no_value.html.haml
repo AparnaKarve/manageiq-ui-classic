@@ -1,0 +1,15 @@
+- items = expand_textual_group(items)
+- if items.present?
+  %table.table.table-bordered.table-hover.table-striped.table-summary-screen
+    %thead
+      %tr
+        %th{:colspan => "2", :align => "left"}
+          = title
+    %tbody
+      - items.each do |item|
+        %tr{:class   => hover_class(item),
+            :title   => item[:title] ? item[:title] : "",
+            :onclick => item[:link] ? click : ""}
+          %td.label
+            = item[:label]
+

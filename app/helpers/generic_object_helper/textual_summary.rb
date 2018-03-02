@@ -17,18 +17,6 @@ module GenericObjectHelper::TextualSummary
     {:label => _("Updated"), :value => format_timezone(@record.updated_at)}
   end
 
-  def textual_attributes_none
-    {:label => _("No Attributes defined"), :no_value => true}
-  end
-
-  def textual_associations_none
-    {:label => _("No Associations defined"), :no_value => true}
-  end
-
-  def textual_methods_none
-    {:label => _("No Methods defined"), :no_value => true}
-  end
-
   def textual_group_attribute_details_list
     if @record.property_attributes.count > 0
       TextualMultilabel.new(
@@ -38,7 +26,7 @@ module GenericObjectHelper::TextualSummary
         :values                 => attributes_array
       )
     else
-      TextualGroup.new(_("Attributes"), %i(attributes_none))
+      TextualNoValue.new(_("Attributes"), {:label => _("No Attributes defined")})
     end
   end
 
@@ -46,7 +34,7 @@ module GenericObjectHelper::TextualSummary
     if @record.property_associations.count > 0
       TextualGroup.new(_("Associations"), associations)
     else
-      TextualGroup.new(_("Associations"), %i(associations_none))
+      TextualNoValue.new(_("Associations"), {:label => _("No Associations defined")})
     end
   end
 
@@ -71,13 +59,13 @@ module GenericObjectHelper::TextualSummary
     @record.property_methods.each do |key|
       methods.push(key.to_sym)
       define_singleton_method("textual_#{key}") do
-        {:label => _("%{label}") % {:label => key}, :no_value => true}
+        {:label => _("%{label}") % {:label => key}}
       end
     end
     if methods.count > 0
-      TextualGroup.new(_("Methods"), methods)
+      TextualNoValue.new(_("Methods"), methods)
     else
-      TextualGroup.new(_("Methods"), %i(methods_none))
+      TextualNoValue.new(_("Methods"), {:label => _("No Methods defined")})
     end
   end
 
