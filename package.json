@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/ManageIQ/manageiq#readme",
   "dependencies": {
-    "@manageiq/react-ui-components": "git://github.com/AparnaKarve/react-ui-components.git#13eff33cd0c33640046698d2f90bdab8b3772608",
+    "@manageiq/react-ui-components": "^0.5.0",
     "angular": "~1.6.6",
     "angular-animate": "~1.6.6",
     "angular-bootstrap-switch": "~0.5.2",
