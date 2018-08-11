@@ -20,12 +20,30 @@
                 %strong
                   = session_info[0]
                 = session_info[1]
-          %strong
-            = _("Plugins")
-          %ul.list-unstyled{:style => "height: 40px;overflow: auto"}
-            - vmdb_plugins_sha.each do |engine, sha|
-              %div
-                = "#{plugin_name(engine)} #{sha}"
+
+          %div{:class => "fields-section-pf", :id => "Plugins", :style => "border-style: none"}
+            %div{:class => "fields-section-header-pf"}
+              %span{:class => "fa fa-angle-right fa-angle-down field-section-toggle-pf"}
+              %strong{:class => "field-section-toggle-pf"}
+                = _("Plugins")
+
+              %div{:class => "form-group"}
+                %ul.list-unstyled{:style => "height: 158px;overflow: auto"}
+                  %table.table.table-bordered.dataTable
+                    %thead
+                    %tbody
+                      - vmdb_plugins_sha.each do |engine, sha|
+                        %tr
+                          %td
+                            = plugin_name(engine)
+                          %td
+                            = sha
+          -#%strong
+          -#  = _("Plugins")
+          -#%ul.list-unstyled{:style => "height: 100px;overflow: auto"}
+          -#  - vmdb_plugins_sha.each do |engine, sha|
+          -#    %div
+          -#      = "#{plugin_name(engine)} #{sha}"
 
         .trademark-pf
           = I18n.t("product.copyright")
@@ -37,4 +55,18 @@
     $("button[data-dismiss='modal']").on('click', function(){
       $('#aboutModal').modal("hide")
     });
+    $('.fields-section-header-pf').attr('aria-expanded', 'false');
+    $('.fields-section-pf .form-group').addClass('hidden');
+    $('.fa.field-section-toggle-pf').removeClass('fa-angle-down');
+
+    // click the field section heading to expand the section
+    $("#Plugins .field-section-toggle-pf").click(function(event){
+      $(this).parents(".fields-section-pf").find(".fa").toggleClass("fa-angle-down");
+      $(this).parents(".fields-section-pf").find(".form-group").toggleClass("hidden");
+      if ($(this).parent().attr('aria-expanded') == 'false') {
+        $(this).parent().attr('aria-expanded', 'true');
+      } else {
+        $(this).parent().attr('aria-expanded', 'false');
+      }
+    })
   });
